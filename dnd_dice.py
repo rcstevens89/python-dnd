@@ -36,37 +36,3 @@ class Roll:
         self.base_total = self.dice[-1]
         self.total = self.base_total + self.modifier
         return self
-
-if __name__ == '__main__':
-    import numpy as np
-    rolls = []
-    single_attack = []
-    ac = 15
-    
-    for i in range(100000):
-        for i in range(4):
-            attack_roll = Roll('1d20', 7)
-            if attack_roll.base_total == 20:
-                damage_1_roll = Roll('1d12')
-                damage_2_roll = Roll('1d6')
-                damage = damage_1_roll.total + damage_2_roll.total
-            elif attack_roll.total >= ac:
-                damage_1_roll = Roll('1d12')
-                damage_2_roll = Roll('1d6')
-                damage = damage_1_roll.total + damage_2_roll.total
-            else:
-                damage = 0
-            single_attack.append(damage)
-        single_attack_np = np.array(single_attack)
-        rolls.append(single_attack_np.sum())
-        single_attack = []
-
-        
-
-    rolls = np.array(rolls)
-    print(rolls.max())
-    print(rolls.min())
-    print(rolls.mean())
-    print(rolls.std())
-    print(rolls.mean() + rolls.std())
-    print(rolls.mean() - rolls.std())
