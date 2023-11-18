@@ -25,6 +25,16 @@ class Character():
         
         global races_df 
         races_df = pd.read_excel(r'./data/character/races.xlsx')
+        races_df = races_df.fillna(0)
+
+        for col in races_df.columns[4:10]:
+            races_df[col] = races_df[col].replace('1+', 1)
+            races_df[col] = races_df[col].replace('2+', 2)
+            races_df[col] = races_df[col].replace('2-', -2)
+            races_df[col] = races_df[col].replace('1-', -1)
+            races_df[col] = pd.to_numeric(races_df[col])
+            races_df[col] = races_df[col].fillna(0)
+
         print('\nWhat race would you like your charcter to be?')
         
         for counter, race in enumerate(races_df['RACE'].unique(), start=1):
@@ -103,21 +113,46 @@ class Character():
                     print(f"\tSize: {race_stats['SIZE']}")
             elif title in ['Race', 'Subrace', 'Book']:
                 continue
-            elif (~race_stats[col].isna().values.any()):
+            elif (race_stats[col].values.any() != 0):
                 print(f'\t{title}: {race_stats[col][0]}')
 
         print("\nWould you like to save these settings for your character? (y/n) ", end ='')
         race_input = input()
 
-        if race_input.lower() == 'y':
+        if race_input.lower() == 'y' and race_stats['SPECIAL'][0] == 0:
             self.size = race_stats['SIZE'][0]
             self.speed = race_stats['SPEED'][0]
-            self.strength           
-        
-        
+            self.str = race_stats['STR'][0]
+            self.dex = race_stats['DEX'][0]
+            self.con = race_stats['CON'][0]
+            self.int = race_stats['INT'][0]
+            self.wis = race_stats['WIS'][0]
+            self.cha = race_stats['CHA'][0]
+            self.feats = 0
+        if race_input.lower() == 'y' and race_stats['SPECIAL'][0] == '1+ Stat of Choice':
+            self.size = race_stats['SIZE'][0]
+            self.speed = race_stats['SPEED'][0]
+            self.str = race_stats['STR'][0]
+            self.dex = race_stats['DEX'][0]
+            self.con = race_stats['CON'][0]
+            self.int = race_stats['INT'][0]
+            self.wis = race_stats['WIS'][0]
+            self.cha = race_stats['CHA'][0]
+            self.feats = 0
+            
+            while True:
+                print("\nChoose one stat to increase: (str/dex/con/int/wis/cha)")
+                stat_input = input()
+                stat_input = stat_input[:3].lower()
 
+                if stat_input in ['str','dex','con','int','wis','cha']:
+                    setattr(self, stat_input, getattr(self, stat_input) + 1)
+                    break
+                else:
+                    print(f'\nSorry, "{stat_input}" not recognized, please try again')
 
+            
 if __name__ == '__main__':
     # print(__file__)
     robert = Character()
-    
+    print(robert.int)
